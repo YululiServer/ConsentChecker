@@ -1,0 +1,7 @@
+rules:
+  - "&aNo Griefing"
+  - "&bNo Stealing"
+  - "&cHave fun!"
+messages:
+  agree: "&a[同意する]"
+  disagree: "&c[同意しない]"

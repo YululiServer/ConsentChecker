@@ -1,0 +1,9 @@
+name: ConsentChecker
+main: xyz.acrylicstyle.tos.ConsentChecker
+version: "1.0"
+api-version: "1.13"
+depend:
+  - TomeitoLib
+commands:
+  consentreload:
+    permission: "consentchecker.reload"
