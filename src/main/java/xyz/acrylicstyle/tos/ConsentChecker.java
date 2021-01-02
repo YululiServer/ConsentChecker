@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -41,7 +42,7 @@ public class ConsentChecker extends JavaPlugin implements Listener {
     public static CollectionList<UUID> agreedPlayers = new CollectionList<>();
     public static String agreeMessage = "";
     public static String disagreeMessage = "";
-    public static CollectionList<CollectionList<String>> rules = new CollectionList<>();
+    public static ICollectionList<ICollectionList<String>> rules = new CollectionList<>();
     public static ConsentChecker instance = null;
 
     @Override
@@ -71,7 +72,7 @@ public class ConsentChecker extends JavaPlugin implements Listener {
         rules = ICollectionList.asList(Objects.requireNonNull(config.getList("rules", new ArrayList<>()))).map(o -> {
             if (o instanceof List) {
                 List<String> list = (List<String>) o;
-                return ICollectionList.asList(list).map(s -> ChatColor.translateAlternateColorCodes('&', s));
+                return new CollectionList<>(list).map(s -> ChatColor.translateAlternateColorCodes('&', s));
             }
             return CollectionList.of(ChatColor.translateAlternateColorCodes('&', (String) o));
         });
@@ -108,7 +109,7 @@ public class ConsentChecker extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent e) {
-        if (e.getInventory().getHolder() instanceof ConsentGui) {
+        if (e.getInventory().getHolder() instanceof ConsentGui || e.getInventory().getType() == InventoryType.LECTERN) {
             if (agreedPlayers.contains(e.getPlayer().getUniqueId())) return;
             new BukkitRunnable() {
                 @Override
@@ -170,7 +171,7 @@ public class ConsentChecker extends JavaPlugin implements Listener {
                 } else {
                     material = Material.WHITE_WOOL; // default state (not set yet)
                 }
-                CollectionList<String> rule = _rule.clone();
+                ICollectionList<String> rule = _rule.clone();
                 String s = rule.clone().get(0);
                 rule.shift();
                 int slot = 10 + index;
